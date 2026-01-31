@@ -396,6 +396,11 @@ class BodyDatabase:
         """Get body parameters by name"""
         return self.bodies.get(name, {})
     
-    def get_all_bodies(self) -> Dict:
-        """Get all bodies in database"""
+    def get_all_bodies(self) -> Dict[str, Dict]:
+        """
+        Get all bodies in database
+        
+        Returns:
+            Dict[str, Dict]: Mapping of body names to their parameter dictionaries
+        """
         return self.bodies

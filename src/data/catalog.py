@@ -74,11 +74,19 @@ def create_object_catalog(body_db: BodyDatabase = None) -> List[Body]:
         ('Deimos', 'Mars'),
     ]
     
+    # Default physical parameters for moons not in database
+    DEFAULT_MOON_GM = 10.0  # km^3/s^2 (small moon typical value)
+    DEFAULT_MOON_RADIUS = 100.0  # km (small moon typical size)
+    
     for moon_name, parent in moon_data:
         data = body_db.get_body(moon_name)
         if not data:
             # Use default values for moons not in database
-            data = {'GM': 10.0, 'radius': 100.0, 'J2': 0.0}
+            data = {
+                'GM': DEFAULT_MOON_GM, 
+                'radius': DEFAULT_MOON_RADIUS, 
+                'J2': 0.0
+            }
         
         bodies.append(Body(
             name=moon_name,

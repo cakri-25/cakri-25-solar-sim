@@ -151,14 +151,12 @@ class Renderer2D:
         for body_name, trail in self.orbit_trails.items():
             if len(trail) > 1:
                 color = self.colors.get(body_name, self.colors['default'])
-                # Draw with transparency
+                # Draw trail with simple line segments
                 for i in range(len(trail) - 1):
                     if (0 <= trail[i][0] <= self.width and 
                         0 <= trail[i][1] <= self.height and
                         0 <= trail[i+1][0] <= self.width and 
                         0 <= trail[i+1][1] <= self.height):
-                        alpha = int(255 * (i / len(trail)))
-                        color_alpha = (*color, alpha)
                         pygame.draw.line(self.screen, color, trail[i], trail[i+1], 1)
     
     def draw_info_panel(self, simulation_time: float, energy: float, 

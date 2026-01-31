@@ -24,9 +24,13 @@ class GeologicalModel:
     Model geological activity based on heating sources
     """
     
+    # Constants
+    ACTIVITY_THRESHOLD = 1e12  # W (1 TW)
+    VOLATILE_EXHAUST_VELOCITY = 0.5  # km/s (typical for water/CO2 outgassing)
+    
     def __init__(self):
         # Activity threshold (W)
-        self.activity_threshold = 1e12  # 1 TW
+        self.activity_threshold = self.ACTIVITY_THRESHOLD
         
         # Radiogenic isotopes (approximate current abundances)
         self.isotopes = {
@@ -140,7 +144,8 @@ class GeologicalModel:
         
         if a > body.radius:
             # Tidal heating rate
-            tidal_heat = (21/2) * k2/Q * parent_body.GM**2 * body.radius**5 * e**2
+            # Factor 21/2 = 10.5 from tidal heating formula
+            tidal_heat = 10.5 * k2/Q * parent_body.GM**2 * body.radius**5 * e**2
             tidal_heat /= (G * a**6)
             
             # Scale by rigidity (less heating for rigid bodies)
@@ -228,7 +233,8 @@ class GeologicalModel:
         
         # Thrust magnitude (simplified rocket equation)
         # F = dm/dt * v_exhaust
-        v_exhaust = 0.5  # km/s (typical for volatile outgassing)
+        # Using typical volatile exhaust velocity (water/CO2)
+        v_exhaust = self.VOLATILE_EXHAUST_VELOCITY
         thrust = geo_state.outgassing_rate * v_exhaust
         
         # Apply impulse

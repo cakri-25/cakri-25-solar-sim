@@ -206,8 +206,10 @@ class SymplecticIntegrator:
         
         # Adaptive timestep: smaller when bodies are closer
         # dt proportional to sqrt(distance)
+        # Characteristic scale: 1e6 km (1 million km, typical for inner solar system)
         if min_distance < float('inf'):
-            adaptive_dt = max_dt * min(1.0, np.sqrt(min_distance / 1e6))
+            characteristic_scale = 1e6  # km
+            adaptive_dt = max_dt * min(1.0, np.sqrt(min_distance / characteristic_scale))
             adaptive_dt = max(min_dt, adaptive_dt)
         else:
             adaptive_dt = max_dt

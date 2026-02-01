@@ -50,7 +50,7 @@ body {
 .app__subtitle {
   margin: 0;
   color: rgba(255, 255, 255, 0.72);
-  max-width: 520px;
+  max-width: 620px;
 }
 
 .app__actions {
@@ -118,7 +118,7 @@ body {
 }
 
 .control--inline {
-  min-width: 200px;
+  min-width: 220px;
 }
 
 .control input,
@@ -132,26 +132,28 @@ body {
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
 }
 
 .stats p,
-.data__grid p {
+.data__grid p,
+.data__summary p {
   margin: 0 0 4px;
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.6);
 }
 
 .stats strong,
-.data__grid strong {
-  font-size: 1.2rem;
+.data__grid strong,
+.data__summary strong {
+  font-size: 1.1rem;
 }
 
 .universe {
   position: relative;
   border-radius: 30px;
-  height: clamp(320px, 55vh, 520px);
+  height: clamp(360px, 55vh, 540px);
   background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05), transparent 70%);
   overflow: hidden;
   border: 1px solid var(--border);
@@ -191,6 +193,15 @@ body {
   align-items: center;
 }
 
+.data__summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(10, 14, 32, 0.6);
+}
+
 .data__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -201,15 +212,6 @@ body {
   margin: 0;
   color: rgba(255, 255, 255, 0.55);
   font-size: 0.85rem;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 body[data-theme="day"] {
@@ -233,7 +235,7 @@ body[data-theme="dusk"] .tips {
   background: rgba(255, 255, 255, 0.15);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .app__header {
     flex-direction: column;
     align-items: flex-start;

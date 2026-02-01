@@ -13,7 +13,7 @@
           <p class="app__eyebrow">ภารกิจจำลองระบบสุริยะ</p>
           <h1>Solar Sim: เล่นได้ทันที</h1>
           <p class="app__subtitle">
-            เปิดไฟล์แล้วเล่นได้เลย พร้อมข้อมูลจริงของดาวเคราะห์และฟิสิกจำลอง
+            เปิดไฟล์แล้วเล่นได้เลย พร้อมข้อมูลจริง 100+ วัตถุ และการแสดงผลที่ปรับสเกลให้มองเห็นง่าย
           </p>
         </div>
         <div class="app__actions">
@@ -61,7 +61,7 @@
       <section class="universe">
         <canvas id="spaceCanvas" aria-label="แผนผังระบบสุริยะ"></canvas>
         <div class="universe__legend">
-          <p>ระยะทางแสดงด้วยสเกลลอการิทึมเพื่อให้เห็นทุกดาว</p>
+          <p>ระยะทางแสดงด้วยสเกลลอการิทึมเพื่อให้เห็นทุกวัตถุ</p>
           <span>ลากเลื่อนเพื่อซูมเข้า-ออก</span>
         </div>
       </section>
@@ -69,26 +69,53 @@
       <section class="data">
         <div class="data__header">
           <div>
-            <h2>ข้อมูลดาวเคราะห์จริง</h2>
-            <p>เลือกดาวเพื่อดูขนาด ระยะทาง มวล และความเร็วเฉลี่ย</p>
+            <h2>ข้อมูลวัตถุจริง</h2>
+            <p>เลือกวัตถุเพื่อดูขนาด ระยะทาง มวล และฟิสิกส์ที่เกี่ยวข้อง</p>
           </div>
           <label class="control control--inline">
-            เลือกดาวเคราะห์
+            เลือกวัตถุ
             <select id="focusSelect"></select>
           </label>
         </div>
+        <div class="data__summary">
+          <div>
+            <p>จำนวนวัตถุทั้งหมด</p>
+            <strong id="objectCount">0</strong>
+          </div>
+          <p id="objectBreakdown"></p>
+        </div>
         <div class="data__grid">
+          <div>
+            <p>ประเภทวัตถุ</p>
+            <strong id="typeValue"></strong>
+          </div>
+          <div>
+            <p>วัตถุแม่</p>
+            <strong id="parentValue"></strong>
+          </div>
           <div>
             <p>เส้นผ่านศูนย์กลาง</p>
             <strong id="diameterValue"></strong>
           </div>
           <div>
-            <p>ระยะห่างจากดวงอาทิตย์</p>
+            <p>ระยะห่างจากวัตถุแม่</p>
             <strong id="distanceValue"></strong>
           </div>
           <div>
             <p>มวล</p>
             <strong id="massValue"></strong>
+          </div>
+          <div>
+            <p>แรงโน้มถ่วงพื้นผิว</p>
+            <strong id="gravityValue"></strong>
+          </div>
+          <div>
+            <p>Hill radius</p>
+            <strong id="hillValue"></strong>
+          </div>
+          <div>
+            <p>จุด L (ประมาณ)</p>
+            <strong id="lagrangeValue"></strong>
           </div>
           <div>
             <p>ความเร็ววงโคจร</p>
@@ -99,11 +126,89 @@
             <strong id="periodValue"></strong>
           </div>
           <div>
-            <p>แรงโน้มถ่วงพื้นผิว</p>
-            <strong id="gravityValue"></strong>
+            <p>อุณหภูมิพื้นผิว</p>
+            <strong id="temperatureValue"></strong>
+          </div>
+          <div>
+            <p>ชั้นบรรยากาศ</p>
+            <strong id="atmosphereValue"></strong>
+          </div>
+          <div>
+            <p>แรงดันชั้นบรรยากาศ</p>
+            <strong id="pressureValue"></strong>
+          </div>
+          <div>
+            <p>ส่วนประกอบหลัก</p>
+            <strong id="compositionValue"></strong>
+          </div>
+          <div>
+            <p>ประเภทพื้นผิว/เทคเจอร์</p>
+            <strong id="textureValue"></strong>
+          </div>
+          <div>
+            <p>สนามแม่เหล็ก</p>
+            <strong id="magneticValue"></strong>
+          </div>
+          <div>
+            <p>วงแหวน</p>
+            <strong id="ringValue"></strong>
+          </div>
+          <div>
+            <p>การสลายตัวของวงแหวน</p>
+            <strong id="ringStabilityValue"></strong>
+          </div>
+          <div>
+            <p>พื้นผิว/แผ่นเปลือกดาว</p>
+            <strong id="surfaceValue"></strong>
+          </div>
+          <div>
+            <p>การเคลื่อนที่ของเปลือกดาว</p>
+            <strong id="tectonicValue"></strong>
+          </div>
+          <div>
+            <p>การกัดเซาะ/การเสียดสี</p>
+            <strong id="erosionValue"></strong>
+          </div>
+          <div>
+            <p>การขยายตัวของธารแข็ง</p>
+            <strong id="iceFlowValue"></strong>
+          </div>
+          <div>
+            <p>สภาพอากาศ/ฝน</p>
+            <strong id="weatherValue"></strong>
+          </div>
+          <div>
+            <p>ป่า/ชีวภาพ</p>
+            <strong id="forestValue"></strong>
+          </div>
+          <div>
+            <p>การแผ่ความร้อน</p>
+            <strong id="heatValue"></strong>
+          </div>
+          <div>
+            <p>การเย็นตัวลง</p>
+            <strong id="coolingValue"></strong>
+          </div>
+          <div>
+            <p>การสลายตัวของธาตุกัมตรังสี</p>
+            <strong id="radioactiveValue"></strong>
+          </div>
+          <div>
+            <p>เงา</p>
+            <strong id="shadowValue"></strong>
+          </div>
+          <div>
+            <p>อุปราคา</p>
+            <strong id="eclipseValue"></strong>
+          </div>
+          <div>
+            <p>คุณภาพข้อมูล</p>
+            <strong id="qualityValue"></strong>
           </div>
         </div>
-        <p class="data__note">ข้อมูลอ้างอิง NASA (ค่ากลางในหน่วยจริง)</p>
+        <p class="data__note">
+          หมายเหตุ: วัตถุบางชนิดเป็นการประมาณจากค่ากลางเพื่อให้มีข้อมูลครบถ้วนมากที่สุด
+        </p>
       </section>
 
       <section class="tips">
@@ -111,11 +216,12 @@
         <ol>
           <li>เปิดไฟล์ <strong>index.html</strong> แล้วเล่นได้ทันทีโดยไม่ต้องติดตั้ง</li>
           <li>ปรับความเร็วด้วยแถบเลื่อนเพื่อดูการโคจรแบบเรียลไทม์</li>
-          <li>เลือกดาวเคราะห์เพื่อดูข้อมูลเชิงฟิสิกส์จริง</li>
+          <li>เลือกวัตถุเพื่อดูข้อมูลเชิงฟิสิกส์และพื้นผิว</li>
         </ol>
       </section>
     </main>
 
+    <script src="data.js"></script>
     <script src="main.js"></script>
   </body>
 </html>

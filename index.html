@@ -211,6 +211,32 @@
         </p>
       </section>
 
+      <section class="validation">
+        <div class="validation__header">
+          <div>
+            <h2>โหมดตรวจสอบความสมจริง</h2>
+            <p>นำข้อมูล ephemeris จริงมาเทียบกับผลจำลองเพื่อดูความคลาดเคลื่อน</p>
+          </div>
+          <div class="validation__actions">
+            <button id="loadSampleBtn" class="button button--ghost">โหลดตัวอย่าง</button>
+            <button id="runValidationBtn" class="button button--primary">รันตรวจสอบ</button>
+          </div>
+        </div>
+        <label class="control">
+          ชุดข้อมูล JSON (state vectors + reference)
+          <textarea
+            id="validationInput"
+            rows="8"
+            spellcheck="false"
+            placeholder="วางข้อมูลจาก Horizons/SBDB ที่นี่"
+          ></textarea>
+        </label>
+        <div class="validation__results">
+          <p>ผลลัพธ์การตรวจสอบ</p>
+          <pre id="validationOutput">รอการรัน...</pre>
+        </div>
+      </section>
+
       <section class="tips">
         <h2>วิธีเล่น</h2>
         <ol>
@@ -223,5 +249,6 @@
 
     <script src="data.js"></script>
     <script src="main.js"></script>
+    <script src="validation.js"></script>
   </body>
 </html>

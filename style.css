@@ -91,6 +91,7 @@ body {
 
 .panel,
 .data,
+.validation,
 .tips {
   background: var(--glass);
   border: 1px solid var(--border);
@@ -185,6 +186,43 @@ body {
   gap: 18px;
 }
 
+.validation {
+  display: grid;
+  gap: 16px;
+}
+
+.validation__header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.validation__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.validation textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.validation__results {
+  background: rgba(10, 14, 32, 0.6);
+  border-radius: 16px;
+  padding: 16px;
+  font-size: 0.9rem;
+}
+
+.validation__results pre {
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .data__header {
   display: flex;
   flex-wrap: wrap;
@@ -230,6 +268,8 @@ body[data-theme="day"] .panel,
 body[data-theme="dusk"] .panel,
 body[data-theme="day"] .data,
 body[data-theme="dusk"] .data,
+body[data-theme="day"] .validation,
+body[data-theme="dusk"] .validation,
 body[data-theme="day"] .tips,
 body[data-theme="dusk"] .tips {
   background: rgba(255, 255, 255, 0.15);

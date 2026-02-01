@@ -51,24 +51,24 @@ const typeLabels = {
   star: "ดาวฤกษ์",
   planet: "ดาวเคราะห์",
   dwarf: "ดาวเคราะห์แคระ",
-  moon: "ดวงจันทร์",
+  satellite: "ดาวบริวาร",
   asteroid: "ดาวเคราะห์น้อย",
   comet: "ดาวหาง",
   tno: "วัตถุแถบไคเปอร์",
 };
 
 const textureGradients = {
-  rocky: ["#d8c9b2", "#9c826a", "#5e4d3d"],
-  ice: ["#d8f6ff", "#9ccbe3", "#5a7b9a"],
-  ocean: ["#8ae1ff", "#2e8ccf", "#0b3d6f"],
-  gas: ["#f2d2a9", "#b88c5d", "#835436"],
-  cloud: ["#ffe6c1", "#f3b47f", "#c07942"],
-  lava: ["#ffb070", "#d9632d", "#7a1e08"],
-  haze: ["#f2e0c0", "#caa877", "#7a5b3b"],
+  rocky: ["#e0d7c8", "#a7886d", "#5f4a38"],
+  ice: ["#f0fbff", "#b3d7ef", "#6a8fb3"],
+  ocean: ["#9ff0ff", "#2f8fd6", "#0d3e70"],
+  gas: ["#f5dfb8", "#c99e6b", "#8b5b3a"],
+  cloud: ["#fff0d5", "#f1c089", "#c98349"],
+  lava: ["#ffc07f", "#e06d36", "#7f250b"],
+  haze: ["#f8ead0", "#d2b07f", "#7f5d3c"],
   star: ["#ffd37a", "#ff9d3c", "#ff6d2d"],
   point: ["#ffffff", "#c8d4ff", "#6a7dff"],
-  belt: ["#cbbfa1", "#8e7f6e", "#4d4238"],
-  comet: ["#e9f6ff", "#b5c8d8", "#5a6f86"],
+  belt: ["#ded1b4", "#a28f78", "#5b4b3f"],
+  comet: ["#f2fbff", "#c5d7e6", "#6d8196"],
 };
 
 const MIN_RENDER_RADIUS_SMALL_BODY = 2.2;
@@ -127,8 +127,9 @@ const updateDataPanel = () => {
   typeValue.textContent = typeLabels[object.type] || capitalizeWords(object.type);
   parentValue.textContent = object.parent ?? "-";
   diameterValue.textContent = object.radiusKm ? `${formatNumber(object.radiusKm * 2)} กม.` : "-";
-  distanceValue.textContent = object.distanceKm
-    ? `${formatNumber(object.distanceKm / 1e6, 2)} ล้านกม.`
+  const displayDistance = object.orbitDistanceKm ?? object.distanceKm;
+  distanceValue.textContent = displayDistance
+    ? `${formatNumber(displayDistance / 1e6, 2)} ล้านกม.`
     : "-";
   massValue.textContent = object.massKg ? `${object.massKg.toExponential(2)} กก.` : "-";
   gravityValue.textContent = object.gravity ? `${object.gravity.toFixed(2)} ม./วินาที²` : "-";
@@ -138,11 +139,13 @@ const updateDataPanel = () => {
   lagrangeValue.textContent = object.lagrangeKm
     ? `${formatNumber(object.lagrangeKm / 1000, 1)} พันกม.`
     : "-";
-  speedOrbitValue.textContent = object.orbitalSpeedKmS
-    ? `${object.orbitalSpeedKmS.toFixed(2)} กม./วินาที`
+  const displaySpeed = object.renderOrbitSpeedKmS ?? object.orbitalSpeedKmS;
+  const displayPeriod = object.renderOrbitPeriodDays ?? object.orbitalPeriodDays;
+  speedOrbitValue.textContent = displaySpeed
+    ? `${displaySpeed.toFixed(2)} กม./วินาที`
     : "-";
-  periodValue.textContent = object.orbitalPeriodDays
-    ? `${formatNumber(object.orbitalPeriodDays, 1)} วัน`
+  periodValue.textContent = displayPeriod
+    ? `${formatNumber(displayPeriod, 1)} วัน`
     : "-";
   temperatureValue.textContent = formatTemp(object.temperatureK);
   atmosphereValue.textContent = object.atmosphere ?? "-";
@@ -206,7 +209,9 @@ const drawShadow = (x, y, radius, angle) => {
 };
 
 const getDistanceScale = () => {
-  const distances = OBJECTS.filter((obj) => obj.distanceKm).map((obj) => obj.distanceKm);
+  const distances = OBJECTS
+    .map((obj) => obj.orbitDistanceKm ?? obj.distanceKm)
+    .filter((distance) => distance && distance > 0);
   const minDistance = Math.min(...distances);
   const maxDistance = Math.max(...distances);
   const minLog = Math.log10(minDistance);
@@ -217,8 +222,9 @@ const getDistanceScale = () => {
 const distanceScale = getDistanceScale();
 
 const scaleDistance = (distanceKm, width, height) => {
-  if (!distanceKm) return 0;
-  const t = (Math.log10(distanceKm) - distanceScale.minLog) / (distanceScale.maxLog - distanceScale.minLog);
+  const baseDistance = distanceKm || 0;
+  if (!baseDistance) return 0;
+  const t = (Math.log10(baseDistance) - distanceScale.minLog) / (distanceScale.maxLog - distanceScale.minLog);
   const minOrbit = Math.min(width, height) * 0.12;
   const maxOrbit = Math.min(width, height) * 0.48;
   return (minOrbit + t * (maxOrbit - minOrbit)) * state.zoom;
@@ -247,12 +253,20 @@ const draw = () => {
   ctx.globalAlpha = 1;
 
   if (SUN) {
-    const sunRadius = Math.pow(SUN.radiusKm, 0.35) * (Math.min(width, height) / 520) * 0.75;
-    drawGradientSphere(centerX, centerY, sunRadius, textureGradients.star);
+  const sunRadius = Math.pow(SUN.radiusKm, 0.35) * (Math.min(width, height) / 520) * 0.75;
+  const sunGradient = textureGradients.star;
+  const sunHalo = ctx.createRadialGradient(centerX, centerY, sunRadius * 0.4, centerX, centerY, sunRadius * 1.8);
+  sunHalo.addColorStop(0, "rgba(255, 210, 140, 0.45)");
+  sunHalo.addColorStop(1, "rgba(255, 120, 40, 0)");
+  ctx.fillStyle = sunHalo;
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, sunRadius * 1.8, 0, Math.PI * 2);
+  ctx.fill();
+  drawGradientSphere(centerX, centerY, sunRadius, sunGradient);
   }
 
-  OBJECTS.filter((obj) => obj.type !== "star" && obj.distanceKm).forEach((object, index) => {
-    const orbitRadius = scaleDistance(object.distanceKm, width, height);
+  OBJECTS.filter((obj) => obj.type !== "star" && (obj.orbitDistanceKm || obj.distanceKm)).forEach((object, index) => {
+    const orbitRadius = scaleDistance(object.orbitDistanceKm ?? object.distanceKm, width, height);
     const isFocus = object === state.focus;
     ctx.strokeStyle = isFocus ? "rgba(255, 203, 107, 0.8)" : "rgba(255, 255, 255, 0.08)";
     ctx.lineWidth = isFocus ? 1.6 : 0.8;
@@ -260,7 +274,7 @@ const draw = () => {
     ctx.arc(centerX, centerY, orbitRadius, 0, Math.PI * 2);
     ctx.stroke();
 
-    const period = object.orbitalPeriodDays || 10000;
+    const period = object.renderOrbitPeriodDays || object.orbitalPeriodDays || 10000;
     // กระจายตำแหน่งเริ่มต้นเพื่อการมองเห็น สามารถใส่ค่าตำแหน่งจริงในอนาคตได้
     const basePhase = (index / OBJECTS.length) * Math.PI * 2;
     const angle = basePhase + (state.elapsedDays / period) * Math.PI * 2;
@@ -287,8 +301,18 @@ const draw = () => {
       ctx.restore();
     }
 
-    const gradient = textureGradients[object.texture] || textureGradients.rocky;
-    drawGradientSphere(objectX, objectY, radius, gradient);
+  const gradient = textureGradients[object.texture] || textureGradients.rocky;
+  drawGradientSphere(objectX, objectY, radius, gradient);
+  if (object.texture === "ocean") {
+    ctx.save();
+    ctx.globalAlpha = 0.15;
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+    ctx.lineWidth = Math.max(0.8, radius * 0.08);
+    ctx.beginPath();
+    ctx.arc(objectX, objectY, radius * 0.7, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
     drawShadow(objectX, objectY, radius, angle);
 
     if (isFocus) {

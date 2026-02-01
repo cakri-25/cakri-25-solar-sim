@@ -33,7 +33,7 @@ const calcOrbit = (distanceKm, parentMassKg) => {
   };
 };
 
-const buildObject = (object, parentMassKg) => {
+const buildObject = (object, parentMassKg, parentDistanceKm, starMassKg) => {
   const distanceKm = object.distanceKm ?? (object.distanceAU ? object.distanceAU * AU_KM : 0);
   const massKg = object.massKg ?? calcMass(object.radiusKm, object.density ?? 2.2);
   const gravity = object.gravity ?? calcGravity(massKg, object.radiusKm);
@@ -42,6 +42,12 @@ const buildObject = (object, parentMassKg) => {
     : distanceKm && parentMassKg
       ? calcOrbit(distanceKm, parentMassKg)
       : { orbitalPeriodDays: 0, orbitalSpeedKmS: 0 };
+  const orbitDistanceKm = parentDistanceKm
+    ? parentDistanceKm + distanceKm
+    : distanceKm;
+  const renderOrbit = orbitDistanceKm && starMassKg
+    ? calcOrbit(orbitDistanceKm, starMassKg)
+    : orbit;
   const hillRadiusKm = distanceKm && parentMassKg
     ? distanceKm * Math.cbrt(massKg / (3 * parentMassKg))
     : 0;
@@ -50,10 +56,13 @@ const buildObject = (object, parentMassKg) => {
   return {
     ...object,
     distanceKm,
+    orbitDistanceKm,
     massKg,
     gravity,
     orbitalPeriodDays: orbit.orbitalPeriodDays,
     orbitalSpeedKmS: orbit.orbitalSpeedKmS,
+    renderOrbitPeriodDays: renderOrbit.orbitalPeriodDays,
+    renderOrbitSpeedKmS: renderOrbit.orbitalSpeedKmS,
     hillRadiusKm,
     lagrangeKm,
   };
@@ -299,7 +308,7 @@ const generateMoon = (name, parentId, overrides = {}) => {
   return {
     id: `${parentId}-${name}`,
     name,
-    type: "moon",
+    type: "satellite",
     parent,
     radiusKm,
     density,
@@ -470,13 +479,19 @@ const parentMasses = RAW_OBJECTS.reduce((map, obj) => {
   return map;
 }, {});
 
+const parentDistances = RAW_OBJECTS.reduce((map, obj) => {
+  map[obj.name] = obj.distanceKm ?? (obj.distanceAU ? obj.distanceAU * AU_KM : 0);
+  return map;
+}, {});
+
 const CELESTIAL_OBJECTS = RAW_OBJECTS.map((obj) => {
   if (obj.type === "star") {
     return obj;
   }
   const parentName = obj.parent ?? "ดวงอาทิตย์";
   const parentMass = parentMasses[parentName] ?? SUN.massKg;
-  return buildObject({ ...obj, parent: parentName }, parentMass);
+  const parentDistanceKm = parentDistances[parentName] ?? 0;
+  return buildObject({ ...obj, parent: parentName }, parentMass, parentDistanceKm, SUN.massKg);
 });
 
 window.CELESTIAL_OBJECTS = CELESTIAL_OBJECTS;

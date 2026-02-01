@@ -6,6 +6,7 @@
   --accent-soft: rgba(255, 203, 107, 0.18);
   --panel: rgba(19, 24, 58, 0.85);
   --border: rgba(255, 255, 255, 0.08);
+  --glass: rgba(13, 18, 44, 0.78);
 }
 
 * {
@@ -49,7 +50,7 @@ body {
 .app__subtitle {
   margin: 0;
   color: rgba(255, 255, 255, 0.72);
-  max-width: 480px;
+  max-width: 520px;
 }
 
 .app__actions {
@@ -88,11 +89,16 @@ body {
   transform: translateY(-2px);
 }
 
-.panel {
-  background: var(--panel);
+.panel,
+.data,
+.tips {
+  background: var(--glass);
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 20px 24px;
+}
+
+.panel {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
@@ -111,6 +117,10 @@ body {
   color: rgba(255, 255, 255, 0.75);
 }
 
+.control--inline {
+  min-width: 200px;
+}
+
 .control input,
 .control select {
   padding: 8px 12px;
@@ -122,24 +132,26 @@ body {
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 14px;
 }
 
-.stats p {
+.stats p,
+.data__grid p {
   margin: 0 0 4px;
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.6);
 }
 
-.stats strong {
-  font-size: 1.4rem;
+.stats strong,
+.data__grid strong {
+  font-size: 1.2rem;
 }
 
 .universe {
   position: relative;
   border-radius: 30px;
-  height: clamp(320px, 50vh, 480px);
+  height: clamp(320px, 55vh, 520px);
   background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05), transparent 70%);
   overflow: hidden;
   border: 1px solid var(--border);
@@ -147,79 +159,48 @@ body {
   place-items: center;
 }
 
-.sun {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ffe8a3, #ff8a3d 70%);
-  box-shadow: 0 0 35px rgba(255, 184, 92, 0.6);
-  position: absolute;
+.universe canvas {
+  width: 100%;
+  height: 100%;
 }
 
-.orbit {
+.universe__legend {
   position: absolute;
-  border-radius: 50%;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
+  bottom: 16px;
+  left: 16px;
+  background: rgba(6, 9, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+  display: grid;
+  gap: 4px;
+}
+
+.data {
+  display: grid;
+  gap: 18px;
+}
+
+.data__header {
   display: flex;
-  justify-content: flex-start;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
   align-items: center;
-  animation: spin 18s linear infinite;
-  animation-play-state: paused;
 }
 
-.orbit--mercury {
-  width: 150px;
-  height: 150px;
+.data__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
 }
 
-.orbit--venus {
-  width: 220px;
-  height: 220px;
-}
-
-.orbit--earth {
-  width: 300px;
-  height: 300px;
-}
-
-.orbit--mars {
-  width: 380px;
-  height: 380px;
-}
-
-.planet {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
-  margin-left: -8px;
-}
-
-.planet--mercury {
-  background: #e8e2d0;
-}
-
-.planet--venus {
-  background: #ffb773;
-}
-
-.planet--earth {
-  background: #6fd0ff;
-}
-
-.planet--mars {
-  background: #ff7d6b;
-}
-
-.tips {
-  background: rgba(12, 14, 34, 0.8);
-  border-radius: 20px;
-  padding: 20px 24px;
-  border: 1px solid var(--border);
-}
-
-.tips h2 {
-  margin-top: 0;
+.data__note {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.85rem;
 }
 
 @keyframes spin {
@@ -243,13 +224,12 @@ body[data-theme="night"] {
   background: radial-gradient(circle at top, #1d2261 0%, #0b0d2a 55%, #060716 100%);
 }
 
-body[data-theme="day"] .universe,
-body[data-theme="dusk"] .universe {
-  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1), transparent 70%);
-}
-
 body[data-theme="day"] .panel,
-body[data-theme="dusk"] .panel {
+body[data-theme="dusk"] .panel,
+body[data-theme="day"] .data,
+body[data-theme="dusk"] .data,
+body[data-theme="day"] .tips,
+body[data-theme="dusk"] .tips {
   background: rgba(255, 255, 255, 0.15);
 }
 
@@ -265,5 +245,10 @@ body[data-theme="dusk"] .panel {
 
   .button {
     flex: 1;
+  }
+
+  .data__header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Solar Sim</title>
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main class="app">
@@ -13,32 +13,31 @@
           <p class="app__eyebrow">ภารกิจจำลองระบบสุริยะ</p>
           <h1>Solar Sim: เล่นได้ทันที</h1>
           <p class="app__subtitle">
-            ลากเลื่อนเพื่อกำหนดความเร็ว แล้วกดเริ่มเพื่อดูดาวเคราะห์โคจร
+            เปิดไฟล์แล้วเล่นได้เลย พร้อมข้อมูลจริงของดาวเคราะห์และฟิสิกจำลอง
           </p>
         </div>
         <div class="app__actions">
-          <button id="startBtn" class="button button--primary">เริ่มการจำลอง</button>
-          <button id="pauseBtn" class="button button--ghost" disabled>หยุดชั่วคราว</button>
-          <button id="resetBtn" class="button button--ghost">รีเซ็ต</button>
+          <button id="toggleBtn" class="button button--primary">หยุดชั่วคราว</button>
+          <button id="resetBtn" class="button button--ghost">รีเซ็ตเวลา</button>
         </div>
       </header>
 
       <section class="panel">
         <div class="controls">
           <label class="control">
-            ความเร็วการโคจร
-            <input id="speedSlider" type="range" min="0.5" max="3.5" value="1.2" step="0.1" />
+            ความเร็วเวลา (วัน/วินาที)
+            <input id="speedSlider" type="range" min="5" max="200" value="40" step="5" />
           </label>
           <label class="control">
             ระดับซูม
             <input id="zoomSlider" type="range" min="0.6" max="1.4" value="1" step="0.05" />
           </label>
           <label class="control">
-            โหมดกลางวัน
+            โหมดท้องฟ้า
             <select id="themeSelect">
               <option value="day">กลางวัน</option>
               <option value="dusk">สนธยา</option>
-              <option value="night">กลางคืน</option>
+              <option value="night" selected>กลางคืน</option>
             </select>
           </label>
         </div>
@@ -46,7 +45,7 @@
         <div class="stats">
           <div>
             <p>ความเร็วขณะนี้</p>
-            <strong id="speedValue">1.2x</strong>
+            <strong id="speedValue">40 วัน/วินาที</strong>
           </div>
           <div>
             <p>จำนวนวันในระบบ</p>
@@ -54,37 +53,69 @@
           </div>
           <div>
             <p>สถานะ</p>
-            <strong id="statusText">พร้อมเล่น</strong>
+            <strong id="statusText">กำลังจำลอง</strong>
           </div>
         </div>
       </section>
 
       <section class="universe">
-        <div class="sun" aria-label="ดวงอาทิตย์"></div>
-        <div class="orbit orbit--mercury">
-          <div class="planet planet--mercury" data-speed="4.15" aria-label="ดาวพุธ"></div>
+        <canvas id="spaceCanvas" aria-label="แผนผังระบบสุริยะ"></canvas>
+        <div class="universe__legend">
+          <p>ระยะทางแสดงด้วยสเกลลอการิทึมเพื่อให้เห็นทุกดาว</p>
+          <span>ลากเลื่อนเพื่อซูมเข้า-ออก</span>
         </div>
-        <div class="orbit orbit--venus">
-          <div class="planet planet--venus" data-speed="1.62" aria-label="ดาวศุกร์"></div>
+      </section>
+
+      <section class="data">
+        <div class="data__header">
+          <div>
+            <h2>ข้อมูลดาวเคราะห์จริง</h2>
+            <p>เลือกดาวเพื่อดูขนาด ระยะทาง มวล และความเร็วเฉลี่ย</p>
+          </div>
+          <label class="control control--inline">
+            เลือกดาวเคราะห์
+            <select id="focusSelect"></select>
+          </label>
         </div>
-        <div class="orbit orbit--earth">
-          <div class="planet planet--earth" data-speed="1" aria-label="โลก"></div>
+        <div class="data__grid">
+          <div>
+            <p>เส้นผ่านศูนย์กลาง</p>
+            <strong id="diameterValue"></strong>
+          </div>
+          <div>
+            <p>ระยะห่างจากดวงอาทิตย์</p>
+            <strong id="distanceValue"></strong>
+          </div>
+          <div>
+            <p>มวล</p>
+            <strong id="massValue"></strong>
+          </div>
+          <div>
+            <p>ความเร็ววงโคจร</p>
+            <strong id="speedOrbitValue"></strong>
+          </div>
+          <div>
+            <p>คาบโคจร</p>
+            <strong id="periodValue"></strong>
+          </div>
+          <div>
+            <p>แรงโน้มถ่วงพื้นผิว</p>
+            <strong id="gravityValue"></strong>
+          </div>
         </div>
-        <div class="orbit orbit--mars">
-          <div class="planet planet--mars" data-speed="0.53" aria-label="ดาวอังคาร"></div>
-        </div>
+        <p class="data__note">ข้อมูลอ้างอิง NASA (ค่ากลางในหน่วยจริง)</p>
       </section>
 
       <section class="tips">
         <h2>วิธีเล่น</h2>
         <ol>
-          <li>ปรับความเร็วด้วยแถบเลื่อน</li>
-          <li>เลือกช่วงเวลาของท้องฟ้า</li>
-          <li>กด “เริ่มการจำลอง” เพื่อดูดาวเคราะห์โคจร</li>
+          <li>เปิดไฟล์ <strong>index.html</strong> แล้วเล่นได้ทันทีโดยไม่ต้องติดตั้ง</li>
+          <li>ปรับความเร็วด้วยแถบเลื่อนเพื่อดูการโคจรแบบเรียลไทม์</li>
+          <li>เลือกดาวเคราะห์เพื่อดูข้อมูลเชิงฟิสิกส์จริง</li>
         </ol>
       </section>
     </main>
 
-    <script type="module" src="/main.js"></script>
+    <script src="main.js"></script>
   </body>
 </html>

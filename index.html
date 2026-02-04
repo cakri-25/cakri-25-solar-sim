@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Solar Sim - เกมระบบสุริยะสมจริง</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app__header">
+      <div>
+        <h1>Solar Sim</h1>
+        <p>เกมระบบสุริยะสมจริงแบบอินเทอร์แอคทีฟ</p>
+      </div>
+      <div class="controls">
+        <label>
+          ความเร็วเวลา
+          <input id="timeScale" type="range" min="0.1" max="6" value="1" step="0.1" />
+          <span id="timeScaleValue">1.0x</span>
+        </label>
+        <button id="togglePause">หยุด/เล่น</button>
+        <label class="toggle">
+          <input id="toggleOrbits" type="checkbox" checked /> แสดงวงโคจร
+        </label>
+      </div>
+    </header>
+
+    <main class="app__main">
+      <section class="canvas-panel">
+        <canvas id="solarCanvas" width="1200" height="720"></canvas>
+        <div class="hint">คลิกที่ดาวเคราะห์เพื่อเก็บข้อมูลภารกิจสำรวจ</div>
+      </section>
+
+      <aside class="info-panel">
+        <div class="mission">
+          <h2>ภารกิจสำรวจ</h2>
+          <p>สำรวจดาวเคราะห์ทั้ง 8 ดวงเพื่อปลดล็อกข้อมูลทั้งหมด</p>
+          <div class="mission__progress">
+            <span id="missionProgress">0/8</span>
+            <div class="mission__bar">
+              <span id="missionFill"></span>
+            </div>
+          </div>
+        </div>
+        <div class="planet-info">
+          <h2 id="planetName">สุริยะ</h2>
+          <p id="planetTag">ศูนย์กลางของระบบสุริยะ</p>
+          <ul id="planetStats"></ul>
+        </div>
+        <div class="legend">
+          <h3>คีย์ลัด</h3>
+          <ul>
+            <li><strong>Space</strong> : หยุด/เล่น</li>
+            <li><strong>O</strong> : แสดง/ซ่อนวงโคจร</li>
+            <li><strong>+</strong>/<strong>-</strong> : ปรับความเร็วเวลา</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>

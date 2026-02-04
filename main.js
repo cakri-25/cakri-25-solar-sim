@@ -4,7 +4,6 @@ const timeScaleInput = document.getElementById("timeScale");
 const timeScaleValue = document.getElementById("timeScaleValue");
 const togglePauseButton = document.getElementById("togglePause");
 const toggleOrbitsInput = document.getElementById("toggleOrbits");
-
 const planetName = document.getElementById("planetName");
 const planetTag = document.getElementById("planetTag");
 const planetStats = document.getElementById("planetStats");
@@ -16,7 +15,7 @@ const state = {
   showOrbits: true,
   timeScale: 1,
   discovered: new Set(),
-};
+  view: { width: canvas.clientWidth, height: canvas.clientHeight, scale: 1 },
 
 const baseCenter = { x: canvas.width / 2, y: canvas.height / 2 };
 
@@ -96,7 +95,7 @@ const planets = [
   },
 ];
 
-const stars = Array.from({ length: 200 }, () => ({
+  const rect = canvas.getBoundingClientRect();
   x: Math.random() * canvas.width,
   y: Math.random() * canvas.height,
   size: Math.random() * 1.4 + 0.4,
@@ -245,7 +244,7 @@ canvas.addEventListener("click", (event) => {
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvas.width / rect.width;
   const scaleY = canvas.height / rect.height;
-  const x = (event.clientX - rect.left) * scaleX;
+canvas.addEventListener("pointerdown", (event) => {
   const y = (event.clientY - rect.top) * scaleY;
 
   const planet = getPlanetFromClick(x, y);
